@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plánování směn</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <h1>Plánování směn</h1>
+    <div class="month-nav">
+      <button id="prevMonth" title="Předchozí měsíc">&larr;</button>
+      <span id="monthLabel"></span>
+      <button id="nextMonth" title="Další měsíc">&rarr;</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <h2>Zaměstnanci</h2>
+      <ul id="employeeList" class="employee-list"></ul>
+      <form id="addEmployeeForm" class="add-employee-form">
+        <input type="text" id="newEmployeeName" placeholder="Jméno zaměstnance" maxlength="40" required>
+        <button type="submit">Přidat</button>
+      </form>
+
+      <h2>Přehled směn v měsíci</h2>
+      <ul id="summaryList" class="summary-list"></ul>
+
+      <div class="sidebar-actions">
+        <button id="printBtn">Tisk / export do PDF</button>
+        <button id="csvBtn">Export do CSV</button>
+        <button id="clearMonthBtn" class="danger">Vymazat rozpis měsíce</button>
+      </div>
+    </aside>
+
+    <main class="calendar-wrap">
+      <div class="legend">
+        <span class="legend-item"><span class="dot morning"></span>Ráno</span>
+        <span class="legend-item"><span class="dot afternoon"></span>Odpoledne</span>
+        <span class="legend-item"><span class="dot fullday"></span>Celý den</span>
+      </div>
+      <div id="calendar" class="calendar"></div>
+    </main>
+
+  </div>
+</div>
+
+<div id="dayModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalDate"></h3>
+      <button id="closeModal" class="close-btn" title="Zavřít">&times;</button>
+    </div>
+    <p class="modal-hint">Pro každého zaměstnance vyber jeho směnu v tento den.</p>
+    <div id="modalEmployeeList" class="modal-employee-list"></div>
+    <div class="modal-footer">
+      <button id="saveDay">Uložit</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
