@@ -1,8 +1,6 @@
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "shiftPlanner.v1";
-
   var WEEKDAY_LABELS = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
   var MONTH_LABELS = [
     "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
@@ -37,34 +35,54 @@
     return "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  function load() {
-    var raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try {
-        var data = JSON.parse(raw);
+  firebase.initializeApp(window.FIREBASE_CONFIG);
+  var db = firebase.firestore();
+  var docRef = db.collection("shiftPlanner").doc("shared");
+  var firestoreUnsubscribe = null;
+
+  function defaultEmployees() {
+    var list = [];
+    for (var i = 1; i <= 10; i++) {
+      list.push({ id: uid(), name: "Zaměstnanec " + i });
+    }
+    return list;
+  }
+
+  function attachFirestoreListener() {
+    if (firestoreUnsubscribe) return;
+    firestoreUnsubscribe = docRef.onSnapshot(function (doc) {
+      var data = doc.data();
+      if (!data) {
+        state.employees = defaultEmployees();
+        state.schedules = {};
+        save();
+      } else {
         state.employees = data.employees || [];
         state.schedules = data.schedules || {};
-      } catch (e) {
-        state.employees = [];
-        state.schedules = {};
       }
-    }
-    if (state.employees.length === 0) {
-      for (var i = 1; i <= 10; i++) {
-        state.employees.push({ id: uid(), name: "Zaměstnanec " + i });
+      var today = new Date();
+      if (state.currentYear === null) {
+        state.currentYear = today.getFullYear();
+        state.currentMonth = today.getMonth();
       }
-      save();
+      renderAll();
+    }, function (err) {
+      console.error("Chyba synchronizace:", err);
+    });
+  }
+
+  function detachFirestoreListener() {
+    if (firestoreUnsubscribe) {
+      firestoreUnsubscribe();
+      firestoreUnsubscribe = null;
     }
-    var today = new Date();
-    state.currentYear = today.getFullYear();
-    state.currentMonth = today.getMonth();
   }
 
   function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    docRef.set({
       employees: state.employees,
       schedules: state.schedules
-    }));
+    });
   }
 
   function getMonthSchedule() {
@@ -378,9 +396,49 @@
     document.getElementById("clearMonthBtn").addEventListener("click", clearMonth);
   }
 
+  // ---------- auth ----------
+
+  function showLogin() {
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("appRoot").classList.add("hidden");
+    detachFirestoreListener();
+  }
+
+  function showApp() {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appRoot").classList.remove("hidden");
+    attachFirestoreListener();
+  }
+
+  function attachAuthEvents() {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var passwordInput = document.getElementById("loginPassword");
+      var errorEl = document.getElementById("loginError");
+      errorEl.textContent = "";
+      firebase.auth().signInWithEmailAndPassword(window.SHARED_LOGIN_EMAIL, passwordInput.value)
+        .then(function () {
+          passwordInput.value = "";
+        })
+        .catch(function () {
+          errorEl.textContent = "Nesprávné heslo.";
+        });
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+      firebase.auth().signOut();
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
-    load();
     attachEvents();
-    renderAll();
+    attachAuthEvents();
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        showApp();
+      } else {
+        showLogin();
+      }
+    });
   });
 })();

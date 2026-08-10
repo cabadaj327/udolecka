@@ -7,7 +7,19 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="app">
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h1>Plánování směn</h1>
+    <p>Zadej sdílené heslo firmy pro přístup k rozpisu.</p>
+    <form id="loginForm">
+      <input type="password" id="loginPassword" placeholder="Heslo" required autofocus>
+      <button type="submit">Přihlásit</button>
+    </form>
+    <p id="loginError" class="login-error"></p>
+  </div>
+</div>
+
+<div class="app hidden" id="appRoot">
 
   <header class="app-header">
     <h1>Plánování směn</h1>
@@ -16,6 +28,7 @@
       <span id="monthLabel"></span>
       <button id="nextMonth" title="Další měsíc">&rarr;</button>
     </div>
+    <button id="logoutBtn" class="logout-btn" title="Odhlásit">Odhlásit</button>
   </header>
 
   <div class="layout">
@@ -64,6 +77,10 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
