@@ -25,6 +25,11 @@
 
   function pad2(n) { return n < 10 ? "0" + n : "" + n; }
 
+  function formatShiftCount(n) {
+    var rounded = Math.round(n * 2) / 2;
+    return (rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(1)).replace(".", ",");
+  }
+
   function monthKey(year, month) { return year + "-" + pad2(month + 1); }
 
   function dayKey(year, month, day) {
@@ -174,11 +179,6 @@
       var weekdayIdx = (firstWeekday + day - 1) % 7;
       cell.className = "day-cell" + (weekdayIdx >= 5 ? " weekend" : "");
 
-      var num = document.createElement("div");
-      num.className = "day-number";
-      num.textContent = day;
-      cell.appendChild(num);
-
       var assignments = getDayAssignments(dk);
       var byShift = { morning: [], afternoon: [], fullday: [] };
       Object.keys(assignments).forEach(function (empId) {
@@ -188,6 +188,13 @@
           if (emp) byShift[shift].push(emp.name);
         }
       });
+
+      var dayTotal = byShift.morning.length * 0.5 + byShift.afternoon.length * 0.5 + byShift.fullday.length;
+
+      var num = document.createElement("div");
+      num.className = "day-number";
+      num.textContent = dayTotal > 0 ? day + " (" + formatShiftCount(dayTotal) + ")" : day;
+      cell.appendChild(num);
 
       ["morning", "afternoon", "fullday"].forEach(function (shift) {
         var row = document.createElement("div");
