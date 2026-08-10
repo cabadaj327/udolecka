@@ -2,12 +2,12 @@
 // Hodnoty najdeš ve Firebase Console: Project settings (ozubené kolo) > General >
 // sekce "Your apps" > Web app > SDK setup and configuration > Config.
 window.FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyD3ZGXyRRFTf9GrxwfGo3JpBNYznPi5HXs",
+  authDomain: "u-dolecka-smeny.firebaseapp.com",
+  projectId: "u-dolecka-smeny",
+  storageBucket: "u-dolecka-smeny.firebasestorage.app",
+  messagingSenderId: "435834667051",
+  appId: "1:435834667051:web:81d6a85ca58edd64412a6e"
 };
 
 // Interní e-mail jediného sdíleného účtu (Firebase Auth vyžaduje e-mail + heslo,
