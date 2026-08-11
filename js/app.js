@@ -294,6 +294,7 @@
 
   function saveDayModal() {
     if (!activeDayKey) return;
+    if (!confirm("Opravdu chcete změny uložit?")) return;
     var monthSched = getMonthSchedule();
     var newAssignments = {};
     var selects = document.querySelectorAll("#modalEmployeeList select");
