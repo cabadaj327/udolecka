@@ -57,10 +57,12 @@
     if (firestoreUnsubscribe) return;
     firestoreUnsubscribe = docRef.onSnapshot(function (doc) {
       var data = doc.data();
+      // Never auto-save here: a transient/empty snapshot must not overwrite
+      // real saved data. The doc only gets created for real on the next
+      // explicit user action (save() is called from those handlers).
       if (!data) {
-        state.employees = defaultEmployees();
-        state.schedules = {};
-        save();
+        state.employees = state.employees.length ? state.employees : defaultEmployees();
+        state.schedules = state.schedules || {};
       } else {
         state.employees = data.employees || [];
         state.schedules = data.schedules || {};
